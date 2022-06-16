@@ -37,8 +37,8 @@ N_BIG = N_BUF
 XDArray = np.zeros(9)##
 
 #N_X_D0 =int(N_X*(1-2**(-0)))
-for i in range(9):
-    XDArray[i] =int(N_X*(1-2**(-2)))
+for i in range(31):
+    XDArray[i] =int(30*i)
 
 
 #The whole number of atoms in the simulation setup
@@ -89,20 +89,20 @@ def make_perfect():
 
     count = 0
     # make perfect lattice
-    for ix in range(indent+1,N_BIG+indent+1):
+    for ix in range(indent,N_BIG+indent):
         for iy in range(N_Y):
             for iz in range(N_Z): 
                 if True:
                     #if ix==indent+1:                   
-                    perfect[count] = [count+1 ,vert[0]+ix*LAT_CONST ,vert[1]+iy*LAT_CONST ,vert[2]+iz*LAT_CONST ,10, 1,vert[1]+(iy-N_Y)*LAT_CONST,vert[2]+(iz-N_Z)*LAT_CONST]
+                    perfect[count] = [count+1 ,vert[0]+ix*LAT_CONST ,vert[1]+iy*LAT_CONST ,vert[2]+iz*LAT_CONST ,len(XDArray)+2, 1,vert[1]+(iy-N_Y)*LAT_CONST,vert[2]+(iz-N_Z)*LAT_CONST]
                     count +=1      
-                    perfect[count] = [count+1 ,surf1[0]+ix*LAT_CONST ,surf1[1]+iy*LAT_CONST ,surf1[2]+iz*LAT_CONST ,10, 1,surf1[1]+(iy-N_Y)*LAT_CONST,surf1[2]+(iz-N_Z)*LAT_CONST]
+                    perfect[count] = [count+1 ,surf1[0]+ix*LAT_CONST ,surf1[1]+iy*LAT_CONST ,surf1[2]+iz*LAT_CONST ,len(XDArray)+2, 1,surf1[1]+(iy-N_Y)*LAT_CONST,surf1[2]+(iz-N_Z)*LAT_CONST]
                     count +=1
-                if ix == N_X_D2:
-                    perfect[count] = [count+1 ,vert[0]+ix*LAT_CONST ,vert[1]+iy*LAT_CONST ,vert[2]+iz*LAT_CONST ,11 , 1,vert[1]+(iy-N_Y)*LAT_CONST,vert[2]+(iz-N_Z)*LAT_CONST]
-                    count +=  1
-                    perfect[count] = [count+1 ,surf1[0]+ix*LAT_CONST ,surf1[1]+iy*LAT_CONST ,surf1[2]+iz*LAT_CONST ,11 , 1,surf1[1]+(iy-N_Y)*LAT_CONST,surf1[2]+(iz-N_Z)*LAT_CONST]
-                    count +=  1
+                for arrayNum in range(len(XDArray)):
+                    if int(ix - indent)  == XDArray[arrayNum]:
+                        perfect[count-2][4] = arrayNum+1                        
+                        perfect[count-1][4] = arrayNum+1                
+"""                
                 if ix == N_X_D3:
                     perfect[count] = [count+1 ,vert[0]+ix*LAT_CONST ,vert[1]+iy*LAT_CONST ,vert[2]+iz*LAT_CONST ,12 , 1,vert[1]+(iy-N_Y)*LAT_CONST,vert[2]+(iz-N_Z)*LAT_CONST]
                     count +=  1
@@ -133,7 +133,7 @@ def make_perfect():
                     count +=  1
                     perfect[count] = [count+1 ,surf1[0]+ix*LAT_CONST ,surf1[1]+iy*LAT_CONST ,surf1[2]+iz*LAT_CONST ,17 , 1,surf1[1]+(iy-N_Y)*LAT_CONST,surf1[2]+(iz-N_Z)*LAT_CONST]
                     count +=  1
-
+"""
 
 def center(x):
     if x%2==0:
