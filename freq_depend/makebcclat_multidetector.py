@@ -34,7 +34,7 @@ N_X_D = int(N_BUF/3)
 #Currently not used; N_BIG-N_BUF=0 is required. 
 N_BIG = N_BUF
 
-XDArray = np.zeros(9)##
+XDArray = np.zeros(31)##
 
 #N_X_D0 =int(N_X*(1-2**(-0)))
 for i in range(31):
@@ -216,7 +216,7 @@ def arrange_lat(R,Vac_Cu):
                                     klist.append(v)
                                     print(len(klist)-1)
     
-    name(Vac_Cu+8)
+    name(33)
 
 #create Fe.lat
 def name(type_num):
