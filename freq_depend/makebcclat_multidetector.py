@@ -3,7 +3,7 @@ import sys
 import math
 import numpy as np
 import random
-
+#
 # lattice constant a0 and strain settings
 LAT_CONST = 2.855324 
 POISSON = 0.293
