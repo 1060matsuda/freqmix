@@ -63,14 +63,14 @@ group d28 type 28
 group d29 type 29
 group d30 type 30
 group d31 type 31
-group d32 type 32
-
-group source type 2
-group detector type 3
-group edge type 6
-group edge_buf type 7
-group buffer type 7 8 9
-group longage type 9
+#group d32 type 32
+##lammps groups shoud be Ngroups<32 (max 31)
+#group source type 2
+#group detector type 3
+#group edge type 6
+#group edge_buf type 7
+#group buffer type 7 8 9
+#group longage type 9
 
 #欲しい情報に記号を割り当てファイル出力させている。
 variable u1 equal xcm(d1,x)
@@ -104,19 +104,19 @@ variable u28 equal xcm(d28,x)
 variable u29 equal xcm(d29,x)
 variable u30 equal xcm(d30,x)
 variable u31 equal xcm(d31,x)
-variable u32 equal xcm(d32,x)
+#variable u32 equal xcm(d32,x)
 
-variable s equal xcm(source,x)
-variable d equal xcm(detector,x)
-variable g equal xcm(edge,x)
-variable t equal temp
-variable p equal press
-variable v equal vol
-variable e equal etotal
+#variable s equal xcm(source,x)
+#variable d equal xcm(detector,x)
+#variable g equal xcm(edge,x)
+#variable t equal temp
+#variable p equal press
+#variable v equal vol
+#variable e equal etotal
 variable i equal time
-variable FIG string iranai
-variable f equal fcm(detector,x)
-variable l equal vcm(detector,x)
+#variable FIG string iranai
+#variable f equal fcm(detector,x)
+#variable l equal vcm(detector,x)
 
 ##############################################
 variable rescaleSteps equal 0
@@ -128,18 +128,27 @@ variable initialSteps equal ${rescaleSteps}+${relaxationSteps}
 thermo 1
 #thermo_style custom time v_sox v_dex temp vol etotal v_FIG
 
-fix extra all print 1 "$u1 $u2 $u3 $u4 $u5 $u6 $u7 $u8 $u9 $u10 $u11 $u12 $u13 $u14 $u15 $u16 $u17 $u18 $u19 $u20 $u21 $u22 $u23 $u24 $u25 $u26 $u27 $u28 $u29 $u30 $u31 $u32" file outp_1.txt
+fix extra all print 1 "$i ${u1} ${u2} ${u3} ${u4} ${u5} ${u6} ${u7} ${u8} ${u9} ${u10} ${u11} ${u12} ${u13} ${u14} ${u15} ${u16} ${u17} ${u18} ${u19} ${u20} ${u21} ${u22} ${u23} ${u24} ${u25} ${u26} ${u27} ${u28} ${u29} ${u30} ${u31}" file outp_1.txt
 
-minimize 1.0e-18 1.0e-18 100000 100000
+#minimize 1.0e-18 1.0e-18 100000 100000
 #fix npt1 all npt temp ${npt_temp} ${npt_temp} 1 iso ${atmos} ${atmos} 1
 #velocity all create ${npt_temp} 12345 dist gaussian
 #velocity all create ${npt_temp} ${rand} dist gaussian
 #fix rescale all temp/rescale 1 50 50 1.0 1.0
-#run ${rescaleSteps}
+##run ${rescaleSteps}
 #unfix rescale
 #run ${relaxationSteps}
 #minimize 1.0e-18 1.0e-18 100000 100000
 
+minimize 1.0e-30 1.0e-30 10000 10000
+
+fix mm1 all box/relax aniso 0.0 couple yz vmax 0.01
+minimize 1.0e-30 1.0e-30 10000 10000
+unfix mm1
+#write_data ./afterboxrelax.cuppt.lat
+fix mm2 all nve
+minimize 1.0e-30 1.0e-30 10000 10000
+unfix mm2
 
 #nveで系を設定し粒子をminimizeで沈静化させている。minimizeが甘いと超音波信号が不規則に揺れることがある。
 fix 1 all nve
@@ -170,11 +179,12 @@ variable current_time equal time
 #variable B equal -1*$A
 #variable T equal 200.0
 
+#とりあえず500GHz, 200GHzでやってみる．
 ##振幅、周期を定める。
 variable A equal 0.1
 variable B equal -1*$A
 variable T1 equal 2
-variable T2 equal 100/7 
+variable T2 equal 5 
 variable Q equal 4*${T2}
 # Q is temporary symbol of 3.5 times T.
 #timestep unit is ps. f = 1000 / T GHz.
@@ -196,7 +206,7 @@ variable myv equal $A*cos(${omega1}*time)+$A*cos(${omega2}*time)
 
 #the extra output file below should be processed by using OVITO
 ###正弦波を導入する。同位相なら$A,逆位相なら$B
-fix 2 source move variable v_myx NULL NULL v_myv NULL NULL
+fix 2 d1 move variable v_myx NULL NULL v_myv NULL NULL
 ##force setting
 #variable frc equal $m*10/$F*v_omega*v_omega*swiggle(0.0,$A,$T)
 #fix 2 source setforce v_frc NULL NULL
@@ -252,7 +262,7 @@ else "jump SELF loopBreak"
 
 label loopBreak
 unfix 2
-variable last equal floor(${T2}/dt)
+variable last equal floor(40/dt)
 
 run ${last}
 
